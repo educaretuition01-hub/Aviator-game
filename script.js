@@ -1,26 +1,44 @@
-let multiplier = 1.0;
-let crashed = false;
+let balance = 100;
+let multiplier = 1;
+let running = false;
 let interval;
 
-function startGame() {
-  crashed = false;
-  multiplier = 1.0;
+function updateBalance() {
+  document.getElementById("balance").innerText = balance;
+}
+
+function bet() {
+  let bet = parseInt(document.getElementById("betAmount").value);
+
+  if (bet > balance) {
+    alert("Not enough balance");
+    return;
+  }
+
+  balance -= bet;
+  updateBalance();
+
+  multiplier = 1;
+  running = true;
 
   interval = setInterval(() => {
-    multiplier += 0.02;
+    multiplier += 0.05;
     document.getElementById("multi").innerText = multiplier.toFixed(2) + "x";
 
-    if (Math.random() < 0.02) {
-      crashed = true;
+    if (Math.random() < 0.03) {
       clearInterval(interval);
-      alert("Crashed at " + multiplier.toFixed(2));
+      running = false;
+      alert("Crashed!");
     }
   }, 100);
 }
 
 function cashOut() {
-  if (!crashed) {
+  if (running) {
     clearInterval(interval);
-    alert("You cashed out at " + multiplier.toFixed(2));
+    let win = Math.floor(multiplier * 10);
+    balance += win;
+    updateBalance();
+    alert("You won ₹" + win);
   }
 }
